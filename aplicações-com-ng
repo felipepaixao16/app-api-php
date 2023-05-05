@@ -1,0 +1,2 @@
+Componente = ng g c nome-do-componente
+Service = ng g s nome-da-pasta/nome-do-service
