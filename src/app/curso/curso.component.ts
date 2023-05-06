@@ -10,18 +10,21 @@ import { Curso } from './curso';
   styleUrls: ['./curso.component.css']
 })
 export class CursoComponent implements OnInit {
+  //URL
+  url = "http://localhost/api-angular/php/";
+
   //Vetor de cursos
-  vetor: Curso[];
+  vetor!:Curso[];
 
   //Objeto da classe Curso
-  curso = new Curso();
+  curso = new Curso("", 0, null!);
 
   //O "binding de interpolação", é quando eu quero exibir essa informação, então
   //eu pego uma informação em TypeScript e mando para o HTML.
   // -> nome: string = "Felipe";
 
   //Construtor
-  constructor(private curso_servico:CursoService) {}
+  constructor(private curso_servico:CursoService) { }
 
   //Inicializador
   ngOnInit() {
@@ -34,6 +37,16 @@ export class CursoComponent implements OnInit {
     this.curso_servico.cadastrarCurso(this.curso).subscribe(
       (res: Curso[]) => {
         
+        //Adicionando dados ao vetor
+        this.vetor = res;
+
+        //Limpar os atributos
+        this.curso.nomeCurso = "";
+        this.curso.valorCurso = 0;
+        
+
+        //Atualizar a listagem
+        this.selecao();
       }
     )
   }
@@ -48,12 +61,39 @@ export class CursoComponent implements OnInit {
   }
 
   //Alterar
-  alterar():void {
-    alert("Alterar");
+  alterar() {
+    this.curso_servico.atualizarCurso(this.curso).subscribe(
+      (res) => {
+
+        //Atualizar vetor
+        this.vetor = res;
+
+        //Limpar os valores do objeto
+        this.curso.nomeCurso = "";
+        this.curso.valorCurso = 0;
+
+        //Atualizar a listagem
+        this.selecao();
+      }
+    )
   }
 
   //Remover
-  remover():void {
-    alert("Remover");
+  remover() {
+    this.curso_servico.removerCurso(this.curso).subscribe(
+      (res : Curso[]) => {
+        this.vetor = res;
+
+        this.curso.nomeCurso = "";
+        this.curso.valorCurso = 0;
+      }
+    )
+  }
+
+  //Selecionar curso especifico
+  selecionarCurso(c:Curso){
+    this.curso.idCurso = c.idCurso;
+    this.curso.nomeCurso = c.nomeCurso;
+    this.curso.valorCurso = c.valorCurso; 
   }
 }
